@@ -8,6 +8,8 @@ const oneUp = document.querySelector("#oneUp");
 const twoUp = document.querySelector("#twoUp");
 const threeUp = document.querySelector("#threeUp");
 const page = document.querySelectorAll(".page");
+const oneNum = document.querySelector(".oneNum");
+
 const oneNum2 = document.querySelector(".oneNum2");
 const twoNum2 = document.querySelector(".twoNum2");
 const threeNum2 = document.querySelector(".threeNum2");
@@ -70,6 +72,7 @@ function simpleGame(event) {
     gezi = document.querySelectorAll(".gezi");
     for (let i = 0; i < 81; i++) {
         gezi[i].addEventListener('contextmenu', createflag);
+        gezi[i].addEventListener('contextmenu', flagnum);
         gezi[i].addEventListener('click', isBeenClicked);
 
     }
@@ -78,10 +81,17 @@ function simpleGame(event) {
 
 function createflag(event) {
     event.preventDefault();
-
     this.classList.toggle('fa');
     this.classList.toggle('fa-flag');
 }
+
+let n=10;
+function flagnum(){
+    n--;
+    oneNum.innerHTML = n;
+}
+
+
 
 function middleGame(event) {
     simple.hidden = true;
