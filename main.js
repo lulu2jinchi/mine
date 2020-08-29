@@ -4,149 +4,93 @@ const middle = document.querySelector(".middle");
 const hard = document.querySelector(".hard");
 const gameName = document.querySelector("#gameName");
 const mainDiv = document.querySelector("#mainDiv");
-const oneUp = document.querySelector("#oneUp");
-const twoUp = document.querySelector("#twoUp");
-const threeUp = document.querySelector("#threeUp");
-const page = document.querySelectorAll(".page");
-const oneNum = document.querySelector(".oneNum");
-
-const oneNum2 = document.querySelector(".oneNum2");
-const twoNum2 = document.querySelector(".twoNum2");
-const threeNum2 = document.querySelector(".threeNum2");
+const title = document.querySelector("#title");
+const page = document.querySelector(".page");
+const flagNum = document.querySelector(".flagNum");
+const time = document.querySelector(".time");
+let timeNum = 1;
 let clickNum = 0;
-
 let gezi;
+let mineNumber = 0;
+let leftMineNumber = 0;
 
-oneUp.hidden = true;
-twoUp.hidden = true;
-threeUp.hidden = true;
-page.hidden = true;
-
+title.hidden = true;
 
 // document.addEventListener("click", CreateTable);
-simple.addEventListener('click', simpleGame);
-middle.addEventListener('click', middleGame);
-hard.addEventListener('click', hardGame);
-page[0].addEventListener('click', backFirstPage);
-page[1].addEventListener('click', backFirstPage);
-page[2].addEventListener('click', backFirstPage);
-
-
+simple.addEventListener('click', () => {
+    createGame(9, 9, 10);
+});
+middle.addEventListener('click', () => {
+    createGame(16, 16, 40);
+});
+hard.addEventListener('click', () => {
+    createGame(30, 16, 99);
+});
+page.addEventListener('click', backFirstPage);
 
 function backFirstPage() {
     location.reload();
 }
 
-// setInterval(
-//     function () {
-//         let num = 0;
-//         oneNum2.innerHTML = num++;
-//         console.log(oneNum2.innerHTML);
-//     }, 1000);
+let width = 0;
+let height = 0;
 
-function simpleGame(event) {
+function createGame(w, h, mine) {
+    mineNumber = mine;
+    leftMineNumber = mine;
+    width = w;
+    height = h;
+    createTable(w, h);
+    gridDataSet(w, h, mine);
+}
+
+function createTable(width, height) {
+    gameName.hidden = true;
+    title.hidden = false;
     simple.hidden = true;
     middle.hidden = true;
     hard.hidden = true;
-    gameName.hidden = true;
-    oneUp.hidden = false;
-    page.hidden = false;
-    let num1 = 1;
     setInterval(
         function () {
-            oneNum2.innerHTML = num1++;
+            time.innerHTML = timeNum++;
         }, 1000);
-
     let table = "<table id=\'small\'>";
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < height; i++) {
         table += "<tr>";
-        for (let j = 0; j < 9; j++) {
-            table += "<td><div id=\"g" + i.toString() + "-" + j.toString() + "\" class=\"gezi\" οnclick=\"SaoLei(this.name)\"></div></td>";
+        for (let j = 0; j < width; j++) {
+            table += "<td><div id=\"g" + i.toString() + "-" + j.toString() + "\" class=\"gezi\"></div></td>";
         }
         table += "</tr>";
     }
-
     table += "</table>";
     mainDiv.innerHTML = table;
-
-    gezi = document.querySelectorAll(".gezi");
-    for (let i = 0; i < 81; i++) {
+    gezi = document.querySelectorAll("div.gezi");
+    for (let i = 0; i < width * height; i++) {
         gezi[i].addEventListener('contextmenu', createflag);
-        gezi[i].addEventListener('contextmenu', flagnum);
         gezi[i].addEventListener('click', isBeenClicked);
 
+        // gezi[i].addEventListener('click', markClickNum(9,10));
     }
-    gridDataSet(9, 10);
+
 }
 
 function createflag(event) {
     event.preventDefault();
+    if (this.dataset.isclick === '1' || (leftMineNumber === 0 && !this.classList.contains('fa-flag'))) {
+        return;
+    }
+    if (!this.classList.contains('fa-flag')) {
+        if (leftMineNumber > 0) {
+            leftMineNumber--;
+        }
+    } else {
+        leftMineNumber++;
+    }
+    flagNum.innerHTML = leftMineNumber;
     this.classList.toggle('fa');
     this.classList.toggle('fa-flag');
 }
 
-let n=10;
-function flagnum(){
-    n--;
-    oneNum.innerHTML = n;
-}
-
-
-
-function middleGame(event) {
-    simple.hidden = true;
-    middle.hidden = true;
-    hard.hidden = true;
-    gameName.hidden = true;
-    twoUp.hidden = false;
-    page.hidden = false;
-    let num2 = 1;
-    setInterval(
-        function () {
-            twoNum2.innerHTML = num2++;
-        }, 1000);
-
-
-    let table = "<table id=\'small\'>";
-    for (let i = 0; i < 16; i++) {
-        table += "<tr>";
-        for (let j = 0; j < 16; j++) {
-            table += "<td><div id=\"g" + i.toString() + "-" + j.toString() + "\" class=\"gezi\"><button name=\"" + i.toString() + "," + j.toString() + "\" class=\"gezi\" οnclick=\"SaoLei(this.name)\"></button></div></td>";
-        }
-        table += "</tr>";
-    }
-    table += "</table>";
-    mainDiv.innerHTML = table;
-}
-
-function hardGame(event) {
-    simple.hidden = true;
-    middle.hidden = true;
-    hard.hidden = true;
-    gameName.hidden = true;
-    threeUp.hidden = false;
-    page.hidden = false;
-    let num3 = 1;
-    setInterval(
-        function () {
-            threeNum2.innerHTML = num3++;
-        }, 1000);
-
-    let table = "<table id=\'small\'>";
-    for (let i = 0; i < 30; i++) {
-        table += "<tr>";
-        for (let j = 0; j < 30; j++) {
-            table += "<td><div id=\"g" + i.toString() + "-" + j.toString() + "\" class=\"gezi\"><button name=\"" + i.toString() + "," + j.toString() + "\" class=\"gezi\" οnclick=\"SaoLei(this.name)\"></button></div></td>";
-        }
-        table += "</tr>";
-    }
-    table += "</table>";
-    mainDiv.innerHTML = table;
-}
-
-function createSimple() {
-
-}
 
 function randomInteger(min, max) {
     let ranInt = Math.round(min - 0.5 + (max - min + 0.5) * Math.random());
@@ -155,7 +99,6 @@ function randomInteger(min, max) {
 
 }
 
-randomInteger(1, 10);
 /**
  * 
  * [
@@ -172,12 +115,12 @@ function isPositionExist(arr, a) {
     }
 }
 
-function generateMinePostions(width, n) {
+function generateMinePostions(width, height, n) {
     let i = 0;
     let arr = [];
     while (i < n) {
         let a = [];
-        a[0] = randomInteger(0, width - 1);
+        a[0] = randomInteger(0, height - 1);
         a[1] = randomInteger(0, width - 1);
         if (!isPositionExist(arr, a)) {
             i++;
@@ -221,14 +164,12 @@ function circleNumber(i, j, arr) {
 
 console.log(circleNumber(4, 5));
 
-function gridDataSet(width, n) {
-    let arr = generateMinePostions(width, n);
-    console.log('arr:', arr);
-    console.log(clickNum);
-    if (clickNum >= width * width - n) {
+function gridDataSet(width, height, n) {
+    let arr = generateMinePostions(width, height, n);
+    if (clickNum >= width * height - n) {
         console.log('you win');
     }
-    for (let i = 0; i < width; i++) {
+    for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
             let el = document.querySelector('#g' + i.toString() + "-" + j.toString());
             el.dataset.num = circleNumber(i, j, arr);
@@ -244,20 +185,16 @@ function gridDataSet(width, n) {
             }
         }
     }
-
+    flagNum.innerHTML = leftMineNumber;
 }
-
-
-
 
 function isBeenClicked(event) {
     clickNum++;
-    console.log(clickNum);
     this.classList.add('beclick');
     this.dataset.isclick = '1';
     this.innerHTML = this.dataset.num;
     if (this.innerHTML === '0') {
-         this.innerHTML = '';
+        this.innerHTML = '';
         let arr = this.id.slice(1).split("-");
         console.log(arr);
 
@@ -323,10 +260,10 @@ function isBeenClicked(event) {
 
     }
     else if (this.innerHTML === '') {
-        Array.from(document.querySelectorAll('.gezi[data-num=""]')).forEach(g=>g.classList.add('fa','fa-bomb'));
-        
+        Array.from(document.querySelectorAll('.gezi[data-num=""]')).forEach(g => g.classList.add('fa', 'fa-bomb'));
+
         setTimeout(
-            ()=>{
+            () => {
                 let isReatart = confirm('you lost!重来吗');
                 if (isReatart) {
                     backFirstPage();
@@ -335,19 +272,19 @@ function isBeenClicked(event) {
         )
     }
 
-    return clickNum;
-}
-
-let clickAllNum = isBeenClicked(event);
-function markClickNum(width, n) {
-    if (clickAllNum >= width * width - n) {
+    if (clickNum >= width * height - mineNumber) {
+        let mintime = localStorage.getItem('key');
         alert('you win');
+        if (timeNum < mintime) {
+            mintime = timeNum;
+            localStorage.setItem('key', mintime);
+        }
+        alert('最佳记录：' + localStorage.getItem('key') + 's');
     }
 }
 
-markClickNum(9, 10);
-console.log('ggggg'+clickAllNum);
-// console.log(clickNum);op
+
+
 
 
 
